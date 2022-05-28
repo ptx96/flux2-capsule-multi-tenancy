@@ -2,12 +2,12 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: dev-team
-  namespace: apps
+  namespace: default
 spec:
   interval: 1m
   url: ssh://git@github.com/maxgio92/flux2-multi-tenancy
   ref:
-    branch: dev-team
+    branch: dev-team-with-capsule
   secretRef:
     name: flux-system
 ---
@@ -15,9 +15,9 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: dev-team
-  namespace: apps
+  namespace: default
 spec:
-  serviceAccountName: dev-team
+  serviceAccountName: dev-team-gitops-reconciler
   interval: 1m
   sourceRef:
     kind: GitRepository
