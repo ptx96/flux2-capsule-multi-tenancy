@@ -2,7 +2,8 @@ apiVersion: source.toolkit.fluxcd.io/v1beta2
 kind: GitRepository
 metadata:
   name: dev-team
-  namespace: default
+  #namespace: default
+  namespace: dev-team
 spec:
   interval: 1m
   url: https://github.com/maxgio92/flux2-capsule-multi-tenancy.git
@@ -13,9 +14,11 @@ apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
 kind: Kustomization
 metadata:
   name: dev-team
-  namespace: default
+  #namespace: default
+  namespace: dev-team
 spec:
-  serviceAccountName: dev-team-gitops-reconciler
+  #serviceAccountName: dev-team-gitops-reconciler
+  serviceAccountName: gitops-reconciler
   interval: 1m
   sourceRef:
     kind: GitRepository

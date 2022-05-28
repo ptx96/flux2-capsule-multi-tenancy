@@ -15,6 +15,25 @@
 
 ---
 #
+# Let's try to create a per-tenant default Namespace
+# to solve the chicken&egg problem, due to the fact
+# that the Tenant's GitOps reconciler should reconcile
+# resources in his Namespace, but it should be able also
+# to create its Tenant's Namespaces.
+# So we put the Tenant GitOps reconciler in a per-Tenant
+# default Namespace which is created by the "parent" Flux GitOps
+# reconciler, below:
+#
+apiVersion: v1
+kind: Namespace
+metadata:
+  labels:
+    toolkit.fluxcd.io/tenant: dev-team
+    capsule.clastix.io/tenant: dev-team
+  name: dev-team
+
+---
+#
 # A Tenant as a set of Namespaces, is owned by the Service Account
 # gitops-reconciler, instead of dev-team.
 #
@@ -22,9 +41,10 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   #name: gitops-reconciler
-  name: dev-team-gitops-reconciler
+  name: gitops-reconciler
   #namespace: apps
-  namespace: default
+  #namespace: default
+  namespace: dev-team
 
 ---
 apiVersion: capsule.clastix.io/v1beta1
@@ -34,7 +54,8 @@ metadata:
 spec:
   owners:
   #- name: system:serviceaccount:apps:gitops-reconciler
-  - name: system:serviceaccount:default:dev-team-gitops-reconciler
+  #- name: system:serviceaccount:default:dev-team-gitops-reconciler
+  - name: system:serviceaccount:dev-team:gitops-reconciler
     kind: ServiceAccount
 
 ---
@@ -48,7 +69,8 @@ metadata:
 spec:
   userGroups:
   #- system:serviceaccounts:apps
-  - system:serviceaccounts:default
+  #- system:serviceaccounts:default
+  - system:serviceaccounts:dev-team
 
 #---
 ## TODO: Instantiate a Dev Team Capsule Tenant Owner
