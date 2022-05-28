@@ -6,6 +6,8 @@ Forked from [fluxcd/flux2-multi-tenancy](https://github.com/fluxcd/flux2-multi-t
 
 Please see [ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
+![architecture](./docs/architeture.png)
+
 ## Quickstart
 
 ### Provision a cluster
