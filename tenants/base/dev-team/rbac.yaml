@@ -1,4 +1,6 @@
 ---
+# TODO: Instantiate a Dev Team Capsule Tenant
+
 apiVersion: v1
 kind: Namespace
 metadata:
@@ -7,6 +9,8 @@ metadata:
   name: apps
 
 ---
+# TODO: Instantiate a Dev Team Capsule Tenant Owner
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
