@@ -4,6 +4,8 @@ resources:
 - gotk-components.yaml
 - gotk-sync.yaml
 patches:
+  # We should instead deny cross-Tenant access, instead of cross-Namespace resource access.
+  # Capsule will do it! :-)
   #- patch: |
   #    - op: add
   #      path: /spec/template/spec/containers/0/args/0

@@ -1,28 +1,14 @@
 ---
-## TODO: Instantiate a Dev Team Capsule Tenant
-#
-# Tenant Namespaces will be instantiated by the Tenant user
-# themselves. I.e. the GitOps way, by the Tenat Owner gitops-reconciler
-# Service Account.
-#
-#apiVersion: v1
-#kind: Namespace
-#metadata:
-#  labels:
-#    toolkit.fluxcd.io/tenant: dev-team
-#  name: apps
-#
-
----
 #
 # Let's try to create a per-tenant default Namespace
 # to solve the chicken&egg problem, due to the fact
 # that the Tenant's GitOps reconciler should reconcile
-# resources in his Namespace, but it should be able also
+# resources in his Tenant Namespaces, but it should be able also
 # to create its Tenant's Namespaces.
+#
 # So we put the Tenant GitOps reconciler in a per-Tenant
 # default Namespace which is created by the "parent" Flux GitOps
-# reconciler, below:
+# reconciler:
 #
 apiVersion: v1
 kind: Namespace
@@ -32,6 +18,21 @@ metadata:
     capsule.clastix.io/tenant: dev-team
   name: dev-team
 
+#---
+# Then, other Tenant Namespaces will be instantiated by the Tenant user
+# themselves. I.e. the GitOps way, by the Tenat Owner gitops-reconciler
+# Service Account, not by the platform admin here.
+#
+# Instead, the Tenant admin will declare it in the Tenant Sync (GitRepo+
+# Kustomization).
+#
+#apiVersion: v1
+#kind: Namespace
+#metadata:
+#  labels:
+#    toolkit.fluxcd.io/tenant: dev-team
+#  name: apps
+#
 ---
 #
 # A Tenant as a set of Namespaces, is owned by the Service Account
@@ -40,10 +41,7 @@ metadata:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  #name: gitops-reconciler
   name: gitops-reconciler
-  #namespace: apps
-  #namespace: default
   namespace: dev-team
 
 ---
@@ -53,14 +51,13 @@ metadata:
   name: dev-team
 spec:
   owners:
-  #- name: system:serviceaccount:apps:gitops-reconciler
-  #- name: system:serviceaccount:default:dev-team-gitops-reconciler
   - name: system:serviceaccount:dev-team:gitops-reconciler
     kind: ServiceAccount
 
 ---
 #
-# The service account gitops-reconciler has to be part of Capsule group.
+# The service account gitops-reconciler (in dev-team Namespace)
+# has to be part of Capsule group, pass through Capsule access control.
 #
 apiVersion: capsule.clastix.io/v1alpha1
 kind: CapsuleConfiguration
@@ -68,12 +65,11 @@ metadata:
   name: default
 spec:
   userGroups:
-  #- system:serviceaccounts:apps
-  #- system:serviceaccounts:default
   - system:serviceaccounts:dev-team
 
 #---
-## TODO: Instantiate a Dev Team Capsule Tenant Owner
+#
+# This is no longer needed. Instead Tenant.spec.owners is what matters.
 #
 #apiVersion: v1
 #kind: ServiceAccount
