@@ -18,21 +18,6 @@ metadata:
     capsule.clastix.io/tenant: dev-team
   name: dev-team
 
-#---
-# Then, other Tenant Namespaces will be instantiated by the Tenant user
-# themselves. I.e. the GitOps way, by the Tenat Owner gitops-reconciler
-# Service Account, not by the platform admin here.
-#
-# Instead, the Tenant admin will declare it in the Tenant Sync (GitRepo+
-# Kustomization).
-#
-#apiVersion: v1
-#kind: Namespace
-#metadata:
-#  labels:
-#    toolkit.fluxcd.io/tenant: dev-team
-#  name: apps
-#
 ---
 #
 # A Tenant as a set of Namespaces, is owned by the Service Account
@@ -45,6 +30,13 @@ metadata:
   namespace: dev-team
 
 ---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: max
+  namespace: dev-team
+
+---
 apiVersion: capsule.clastix.io/v1beta1
 kind: Tenant
 metadata:
@@ -52,6 +44,8 @@ metadata:
 spec:
   owners:
   - name: system:serviceaccount:dev-team:gitops-reconciler
+    kind: ServiceAccount
+  - name: system:serviceaccount:dev-team:max
     kind: ServiceAccount
 
 ---
@@ -66,34 +60,3 @@ metadata:
 spec:
   userGroups:
   - system:serviceaccounts:dev-team
-
-#---
-#
-# This is no longer needed. Instead Tenant.spec.owners is what matters.
-#
-#apiVersion: v1
-#kind: ServiceAccount
-#metadata:
-#  labels:
-#    toolkit.fluxcd.io/tenant: dev-team
-#  name: dev-team
-#  namespace: apps
-#
-#---
-#apiVersion: rbac.authorization.k8s.io/v1
-#kind: RoleBinding
-#metadata:
-#  labels:
-#    toolkit.fluxcd.io/tenant: dev-team
-#  name: gotk-reconciler
-#  namespace: apps
-#roleRef:
-#  apiGroup: rbac.authorization.k8s.io
-#  kind: ClusterRole
-#  name: cluster-admin
-#subjects:
-#- kind: User
-#  name: gotk:apps:reconciler
-#- kind: ServiceAccount
-#  name: dev-team
-#  namespace: apps
