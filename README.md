@@ -12,13 +12,34 @@ Please see [ARCHITECTURE.md](./docs/ARCHITECTURE.md).
 
 ## Quickstart
 
-### Provision a cluster
+### 1. Fork this repository
+
+#### 1.1. Update platform Sync configurations to point to the fork
+
+- `clusters/staging/flux-system/gotk-sync.yaml`
+```
+  url: ssh://git@github.com/maxgio92/flux2-capsule-multi-tenancy
+```
+#### 1.2. Update tenants Sync configurations to point to the fork
+
+- `tenants/base/dev-team/sync.yaml`
+```
+  url: https://github.com/maxgio92/flux2-capsule-multi-tenancy.git
+```
+
+### 2. Create a personal access token
+
+This is needed to bootstrap Flux configuration to the forked repository and add a deploy key to read from it.
+
+The access token is then discarded and can be revoked.
+
+### 3. Provision a cluster
 
 ```
 kind create cluster
 ```
 
-### Bootstrap Flux
+### 4. Bootstrap Flux
 
 ```
 export GITHUB_USER=<your-username>
@@ -32,7 +53,7 @@ flux bootstrap github \
     --path=clusters/staging
 ```
 
-### Overwite Flux configuration with multitenancy lockdown (from local repo)
+### 5. Overwite Flux configuration with multitenancy lockdown (from local repo)
 
 ```
 git push origin main -f
