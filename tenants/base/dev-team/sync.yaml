@@ -6,7 +6,7 @@ metadata:
 spec:
   interval: 1m
   url: https://github.com/ptx96/flux2-capsule-multi-tenancy.git
-  namespace: openshift-gitops
+  #namespace: openshift-gitops
   ref:
     branch: dev-team
 ---
